@@ -1,7 +1,7 @@
 class Caude < Formula
   desc "Menu bar app showing Claude Code's 5-hour/weekly usage windows"
   homepage "https://github.com/KarlinskyS/caude-o-clock"
-  url "https://github.com/KarlinskyS/caude-o-clock.git", tag: "v0.2.7", revision: "ba2c1ee7873244b7f9111ad03d393f301dbca197", using: :git
+  url "https://github.com/KarlinskyS/caude-o-clock.git", tag: "v0.2.8", revision: "74529b81c299370d5e25708a7cafad8808f1b1d2", using: :git
 
   depends_on :macos
   depends_on "python@3.12"
