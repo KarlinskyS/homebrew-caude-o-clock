@@ -1,20 +1,20 @@
 class Caude < Formula
   desc "Menu bar app showing Claude Code's 5-hour/weekly usage windows"
   homepage "https://github.com/KarlinskyS/caude-o-clock"
-  url "https://github.com/KarlinskyS/caude-o-clock.git", tag: "v0.2.8", revision: "74529b81c299370d5e25708a7cafad8808f1b1d2", using: :git
+  url "https://github.com/KarlinskyS/caude-o-clock.git", tag: "v0.3.0", revision: "5ae8cdd45b72090331a0d6b9d08c76735d6fdbee", using: :git
 
   depends_on :macos
-  depends_on "python@3.12"
 
   def install
-    venv = libexec/"venv"
-    system formula_opt_bin("python@3.12")/"python3.12", "-m", "venv", venv
-    system venv/"bin/pip", "install", "--upgrade", "pip"
-    system venv/"bin/pip", "install", "-r", "requirements-build.txt"
-    system venv/"bin/python", "setup.py", "-q", "py2app",
-      "--dist-dir", "build-dist", "--bdist-base", "build"
-
-    libexec.install "build-dist/Caude o'clock.app"
+    app = libexec/"Caude o'clock.app"
+    (app/"Contents/MacOS").mkpath
+    (app/"Contents/Resources").mkpath
+    system "/usr/bin/swiftc", "native/CaudeOClock.swift",
+      "-framework", "AppKit",
+      "-framework", "Foundation",
+      "-o", app/"Contents/MacOS/Caude o'clock"
+    (app/"Contents/Info.plist").write File.read("native/Info.plist")
+    (app/"Contents/Resources/app-icon.icns").write File.binread("assets/app-icon.icns")
     libexec.install "caude"
 
     (bin/"caude").write <<~EOS
