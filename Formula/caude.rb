@@ -1,7 +1,7 @@
 class Caude < Formula
   desc "Menu bar app showing Claude Code's 5-hour/weekly usage windows"
   homepage "https://github.com/KarlinskyS/caude-o-clock"
-  url "https://github.com/KarlinskyS/caude-o-clock.git", tag: "v0.2.5", revision: "0b6e5ceb265cdce276da81ee22129c36d368a545", using: :git
+  url "https://github.com/KarlinskyS/caude-o-clock.git", tag: "v0.2.6", revision: "473a25ac47a05d4252cd990b49cfe052e966bfc5", using: :git
 
   depends_on :macos
   depends_on "python@3.12"
@@ -10,9 +10,12 @@ class Caude < Formula
     venv = libexec/"venv"
     system formula_opt_bin("python@3.12")/"python3.12", "-m", "venv", venv
     system venv/"bin/pip", "install", "--upgrade", "pip"
-    system venv/"bin/pip", "install", "pyobjc-framework-Cocoa"
+    system venv/"bin/pip", "install", "-r", "requirements-build.txt"
+    system venv/"bin/python", "setup.py", "-q", "py2app",
+      "--dist-dir", "build-dist", "--bdist-base", "build"
 
-    libexec.install Dir["*"]
+    libexec.install "build-dist/Caude o'clock.app"
+    libexec.install "caude"
 
     (bin/"caude").write <<~EOS
       #!/bin/bash
@@ -23,6 +26,6 @@ class Caude < Formula
 
   test do
     system bin/"caude", "--help"
-    system libexec/"venv/bin/python", "-c", "import sys; sys.path.insert(0, '#{libexec}'); import ccusagebar"
+    assert_predicate libexec/"Caude o'clock.app/Contents/MacOS/Caude o'clock", :executable?
   end
 end
