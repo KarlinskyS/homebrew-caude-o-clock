@@ -1,23 +1,19 @@
 class Caude < Formula
   desc "Menu bar app showing Claude Code's 5-hour/weekly usage windows"
   homepage "https://github.com/KarlinskyS/caude-o-clock"
-  url "https://github.com/KarlinskyS/caude-o-clock.git", tag: "v0.3.1", revision: "1b2890fd85a81e0524b6a81d170aa90ec6de6e32", using: :git
+  url "https://github.com/KarlinskyS/caude-o-clock.git", tag: "v1.0.1", revision: "74a8cc84270c61e8c38d4540b66493a4c20914b7", using: :git
 
+  depends_on "python@3.12"
   depends_on :macos
 
   def install
-    app = libexec/"Caude o'clock.app"
-    (app/"Contents/MacOS").mkpath
-    (app/"Contents/Resources").mkpath
-    system "/usr/bin/swiftc", "native/CaudeOClock.swift",
-      "-parse-as-library",
-      "-framework", "AppKit",
-      "-framework", "Foundation",
-      "-framework", "SwiftUI",
-      "-o", app/"Contents/MacOS/Caude o'clock"
-    (app/"Contents/Info.plist").write File.read("native/Info.plist")
-    (app/"Contents/Resources/app-icon.icns").write File.binread("assets/app-icon.icns")
+    libexec.install Dir["*.py"]
+    libexec.install "assets"
+    libexec.install "requirements.txt"
     libexec.install "caude"
+
+    system Formula["python@3.12"].opt_bin/"python3.12", "-m", "venv", libexec/".venv"
+    system libexec/".venv/bin/pip", "install", "--quiet", "-r", libexec/"requirements.txt"
 
     (bin/"caude").write <<~EOS
       #!/bin/bash
@@ -27,7 +23,8 @@ class Caude < Formula
   end
 
   test do
+    assert_predicate libexec/".venv/bin/python3", :exist?
+    assert_predicate libexec/"ccusagebar.py", :exist?
     system bin/"caude", "--help"
-    assert_predicate libexec/"Caude o'clock.app/Contents/MacOS/Caude o'clock", :executable?
   end
 end
