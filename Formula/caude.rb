@@ -1,10 +1,10 @@
 class Caude < Formula
   desc "Menu bar app showing Claude Code's 5-hour/weekly usage windows"
   homepage "https://github.com/KarlinskyS/caude-o-clock"
-  url "https://github.com/KarlinskyS/caude-o-clock.git", tag: "v1.0.1", revision: "74a8cc84270c61e8c38d4540b66493a4c20914b7", using: :git
+  url "https://github.com/KarlinskyS/caude-o-clock.git", tag: "v1.0.2", revision: "09f4cf9c9c5b50145c9e6dab2bb4a1f8c552601e", using: :git
 
-  depends_on "python@3.12"
   depends_on :macos
+  depends_on "python@3.12"
 
   def install
     libexec.install Dir["*.py"]
@@ -12,7 +12,7 @@ class Caude < Formula
     libexec.install "requirements.txt"
     libexec.install "caude"
 
-    system Formula["python@3.12"].opt_bin/"python3.12", "-m", "venv", libexec/".venv"
+    system formula_opt_bin("python@3.12")/"python3.12", "-m", "venv", libexec/".venv"
     system libexec/".venv/bin/pip", "install", "--quiet", "-r", libexec/"requirements.txt"
 
     (bin/"caude").write <<~EOS
@@ -23,8 +23,8 @@ class Caude < Formula
   end
 
   test do
-    assert_predicate libexec/".venv/bin/python3", :exist?
-    assert_predicate libexec/"ccusagebar.py", :exist?
+    assert_path_exists libexec/".venv/bin/python3"
+    assert_path_exists libexec/"ccusagebar.py"
     system bin/"caude", "--help"
   end
 end
